@@ -22,8 +22,8 @@ module "eks" {
   # Optional: Adds the current caller identity as an administrator via cluster access entry
   enable_cluster_creator_admin_permissions = true
 
-  vpc_id                   = "module.vpc.vpc_id"
-  subnet_ids               = ["module.vpc.private_subnets[0]", "module.vpc.private_subnets[1]", "module.vpc.private_subnets[0]"]
+  vpc_id                   = module.vpc.vpc_id
+  subnet_ids               = [module.vpc.private_subnets[0], module.vpc.private_subnets[1], module.vpc.private_subnets[0]]
 
 
   # EKS Managed Node Group(s)
