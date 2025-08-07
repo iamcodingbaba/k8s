@@ -1,4 +1,4 @@
-module "eks" {
+ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 21.0"
 
@@ -19,7 +19,7 @@ module "eks" {
   endpoint_public_access                    = true
   enable_cluster_creator_admin_permissions  = true
 
-  vpc_id     = module.vpc.vpc_id
+  vpc_id     = module.vpc.vpc_id 
   subnet_ids = [
     module.vpc.private_subnets[0],
     module.vpc.private_subnets[1],
@@ -40,18 +40,18 @@ module "eks" {
         environment = "dev"
       }
 
-      taints = [
-        {
+      taints = {
+        dedicated = {
           key    = "dedicated"
           value  = "gpu-workloads"
-          effect = "NoSchedule"
+          effect = "NO_SCHEDULE"
         },
-        {
+        special = {
           key    = "special"
           value  = "true"
-          effect = "PreferNoSchedule"
+          effect = "NO_SCHEDULE"
         }
-      ]
+      }
     }
   }
 
