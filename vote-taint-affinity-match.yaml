@@ -1,0 +1,66 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vote
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      batch: demo
+  template:
+    metadata:
+      labels:
+        batch: demo
+    spec:
+      containers:
+      - name: vote
+        image: codingbaba/c51:vote
+        resources:
+          requests:
+            memory: "300Mi"
+            cpu: ".3"
+          limits:
+            memory: "500Mi"
+            cpu: ".5"
+        env:
+        - name: REDIS_HOST
+          value: redis
+        ports:
+        - containerPort: 80
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: node-type
+                operator: In
+                values:
+                - worker
+            - matchExpressions:
+              - key: environment
+                operator: In
+                values:
+                - dev
+      tolerations:
+      - key: "dedicated"
+        operator: "Equal"
+        value: "gpu-workloads"
+        effect: "NoSchedule"
+      - key: "special"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vote
+spec:
+  type: LoadBalancer
+  selector:
+    batch: demo
+  ports:
+  - port: 80
+    targetPort: 80
